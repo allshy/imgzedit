@@ -8,56 +8,53 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="topbar-left">
-      <div class="brand-col">
+    <div class="topbar-main">
+      <div class="topbar-left">
         <div class="brand-mark">M</div>
-        <div class="sub mobile-api">
-          API 注册地址:
-          <span class="mono">https://ai.gitee.com/serverless-api</span>
-        </div>
       </div>
 
-      <div class="title-col">
+      <div class="topbar-center">
         <div class="h1">Image View</div>
-        <div class="sub desktop-api">
-          API 注册地址:
-          <span class="mono">https://ai.gitee.com/serverless-api</span>
+      </div>
+
+      <div class="topbar-right">
+        <a
+          class="top-icon-btn"
+          href="https://github.com/MallocPointer/gitee/"
+          target="_blank"
+          rel="noopener"
+          aria-label="GitHub 仓库"
+          title="GitHub 仓库"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.11.79-.25.79-.56v-2.16c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.27-1.68-1.27-1.68-1.04-.72.08-.71.08-.71 1.15.08 1.75 1.18 1.75 1.18 1.02 1.75 2.67 1.25 3.32.96.1-.74.4-1.25.72-1.54-2.56-.29-5.25-1.28-5.25-5.72 0-1.27.46-2.3 1.19-3.12-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.19 1.19a11.1 11.1 0 0 1 5.8 0c2.22-1.5 3.19-1.19 3.19-1.19.63 1.58.23 2.75.11 3.04.74.82 1.19 1.85 1.19 3.12 0 4.45-2.7 5.43-5.28 5.72.41.35.78 1.05.78 2.11v3.12c0 .31.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+
+        <button
+          class="top-icon-btn coffee-btn"
+          id="donateBtn"
+          type="button"
+          aria-label="赞助项目"
+          title="赞助项目"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M3 6.5A2.5 2.5 0 0 1 5.5 4h9A2.5 2.5 0 0 1 17 6.5V7h1.75A3.25 3.25 0 0 1 22 10.25c0 1.64-1.23 3.02-2.86 3.21A5.5 5.5 0 0 1 13.75 18h-6.5A5.25 5.25 0 0 1 2 12.75V6.5Zm14 2V11a1.75 1.75 0 0 0 0-3.5H17Z"/>
+            <path fill="currentColor" d="M6 20a1 1 0 0 1 1-1h9a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1Z"/>
+          </svg>
+          <span>赞助</span>
+        </button>
+
+        <div class="status">
+          <span class="badge" id="statusBadge">准备就绪 / Ready</span>
         </div>
       </div>
     </div>
 
-    <div class="topbar-right">
-      <a
-        class="top-icon-btn"
-        href="https://github.com/MallocPointer/gitee/"
-        target="_blank"
-        rel="noopener"
-        aria-label="GitHub 仓库"
-        title="GitHub 仓库"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.11.79-.25.79-.56v-2.16c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.27-1.68-1.27-1.68-1.04-.72.08-.71.08-.71 1.15.08 1.75 1.18 1.75 1.18 1.02 1.75 2.67 1.25 3.32.96.1-.74.4-1.25.72-1.54-2.56-.29-5.25-1.28-5.25-5.72 0-1.27.46-2.3 1.19-3.12-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.19 1.19a11.1 11.1 0 0 1 5.8 0c2.22-1.5 3.19-1.19 3.19-1.19.63 1.58.23 2.75.11 3.04.74.82 1.19 1.85 1.19 3.12 0 4.45-2.7 5.43-5.28 5.72.41.35.78 1.05.78 2.11v3.12c0 .31.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/>
-        </svg>
-        <span>GitHub</span>
-      </a>
-
-      <button
-        class="top-icon-btn coffee-btn"
-        id="donateBtn"
-        type="button"
-        aria-label="赞助项目"
-        title="赞助项目"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M3 6.5A2.5 2.5 0 0 1 5.5 4h9A2.5 2.5 0 0 1 17 6.5V7h1.75A3.25 3.25 0 0 1 22 10.25c0 1.64-1.23 3.02-2.86 3.21A5.5 5.5 0 0 1 13.75 18h-6.5A5.25 5.25 0 0 1 2 12.75V6.5Zm14 2V11a1.75 1.75 0 0 0 0-3.5H17Z"/>
-          <path fill="currentColor" d="M6 20a1 1 0 0 1 1-1h9a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1Z"/>
-        </svg>
-        <span>赞助</span>
-      </button>
-
-      <div class="status">
-        <span class="badge" id="statusBadge">准备就绪 / Ready</span>
-      </div>
+    <div class="topbar-api">
+      <span class="api-label">API 注册地址:</span>
+      <span class="mono api-link">https://ai.gitee.com/serverless-api</span>
     </div>
   </header>
 
@@ -104,7 +101,6 @@
       </div>
     </section>
 
-    <!-- z-image -->
     <section class="card model-panel" id="panelZ">
       <h2>z-image（文生图 / Text-to-Image）</h2>
 
@@ -132,7 +128,6 @@
       </div>
     </section>
 
-    <!-- Edit-2511 -->
     <section class="card model-panel" id="panelEdit">
       <h2>Edit-2511（图像编辑 / Image Edit）</h2>
 
@@ -178,7 +173,6 @@
       </div>
     </section>
 
-    <!-- Wan2.2 -->
     <section class="card model-panel" id="panelWan">
       <h2>Wan2.2-I2V-A14B（图生视频 / Image-to-Video）</h2>
 
@@ -279,7 +273,6 @@
       </div>
     </section>
 
-    <!-- HunyuanVideo-1.5 -->
     <section class="card model-panel" id="panelHunyuan">
       <h2>HunyuanVideo-1.5（文生视频 / Text-to-Video）</h2>
 
