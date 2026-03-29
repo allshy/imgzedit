@@ -1,4 +1,112 @@
 
+html{scroll-behavior:smooth}
+body.modal-open{overflow:hidden}
+.topbar{
+  position:sticky; top:0; z-index:1000;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:12px 18px; border-bottom:1px solid var(--line);
+  background:rgba(8,9,16,.82); backdrop-filter: blur(14px);
+}
+.topbar-left,.topbar-right{display:flex; align-items:center; gap:12px}
+.topbar-right{margin-left:auto}
+.brand-mark{
+  width:40px; height:40px; border-radius:14px;
+  display:grid; place-items:center; flex:none;
+  font-size:18px; font-weight:800; letter-spacing:.6px;
+  color:#fff;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), transparent 35%),
+    linear-gradient(135deg, rgba(79,124,255,.95), rgba(37,194,160,.9));
+  box-shadow: 0 10px 24px rgba(79,124,255,.2);
+}
+.title{min-width:0}
+.h1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.top-icon-btn{
+  height:42px; padding:0 14px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  display:inline-flex; align-items:center; gap:10px;
+  text-decoration:none; cursor:pointer;
+  transition:transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.top-icon-btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(255,255,255,.22);
+  background:rgba(255,255,255,.08);
+  box-shadow:0 10px 22px rgba(0,0,0,.22);
+}
+.top-icon-btn svg{width:18px; height:18px; flex:none}
+.coffee-btn{
+  background:linear-gradient(180deg, rgba(255,166,77,.18), rgba(255,140,66,.10));
+  border-color:rgba(255,166,77,.28);
+}
+.status .badge{white-space:nowrap}
+
+.donate-modal{
+  position:fixed; inset:0; z-index:2000;
+  display:none;
+}
+.donate-modal.show{display:block}
+.donate-mask{
+  position:absolute; inset:0;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+}
+.donate-panel{
+  position:relative;
+  width:min(92vw, 420px);
+  margin:8vh auto 0;
+  padding:22px 22px 18px;
+  border-radius:24px;
+  border:1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(900px 500px at 20% -10%, rgba(255,166,77,.1), transparent 40%),
+    radial-gradient(700px 480px at 120% 0%, rgba(79,124,255,.1), transparent 34%),
+    #121318;
+  box-shadow:0 28px 60px rgba(0,0,0,.4);
+}
+.donate-close{
+  position:absolute; top:12px; right:12px;
+  width:36px; height:36px; border:none; border-radius:50%;
+  background:rgba(255,255,255,.06); color:var(--text);
+  cursor:pointer; font-size:24px; line-height:1;
+}
+.donate-eyebrow{
+  color:#ffb45c; font-size:12px; letter-spacing:.12em;
+  text-transform:uppercase; margin-bottom:8px;
+}
+.donate-panel h3{margin:0 0 8px; font-size:24px}
+.donate-text{
+  margin:0 0 14px;
+  color:var(--muted); font-size:14px; line-height:1.6;
+}
+.donate-image{
+  display:block; width:100%; max-width:300px; margin:0 auto 16px;
+  border-radius:18px; border:1px solid rgba(255,255,255,.08);
+  background:#fff;
+}
+.donate-download{
+  width:100%; justify-content:center; text-decoration:none; display:inline-flex;
+}
+
+@media (max-width: 880px){
+  .topbar{padding:12px 14px}
+  .topbar-left{min-width:0; flex:1}
+  .topbar-right{gap:8px}
+  .top-icon-btn{padding:0 12px}
+  .top-icon-btn span{display:none}
+  .status{display:none}
+  .brand-mark{width:36px; height:36px; border-radius:12px}
+  .h1{font-size:16px}
+  .sub{font-size:11px}
+}
+@media (max-width: 520px){
+  .sub{display:none}
+}
+
+
 :root{
   --bg:#0b0c10;
   --card:#121318;
@@ -17,12 +125,6 @@
 body{
   margin:0; background:linear-gradient(180deg,#080910,#0b0c10 40%, #07080d);
   color:var(--text); font-family:var(--sans);
-}
-.topbar{
-  position:sticky; top:0; z-index:10;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 18px; border-bottom:1px solid var(--line);
-  background:rgba(8,9,16,.78); backdrop-filter: blur(10px);
 }
 .h1{font-size:18px; font-weight:700; letter-spacing:.2px}
 .sub{font-size:12px; color:var(--muted); margin-top:4px}
