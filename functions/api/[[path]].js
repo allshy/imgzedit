@@ -30,7 +30,8 @@ export async function onRequest(context) {
   const init = {
     method: request.method,
     headers,
-    redirect: "manual",
+    redirect: "follow",
+    cache: "no-store",
   };
 
   // Only attach body for non-GET/HEAD
@@ -40,8 +41,16 @@ export async function onRequest(context) {
 
   const upstream = await fetch(targetUrl.toString(), init);
 
-  // Stream response; add CORS headers
+  // Stream response; strip upstream cache headers, prevent edge caching, add CORS headers
   const respHeaders = new Headers(upstream.headers);
+  respHeaders.delete("Cache-Control");
+  respHeaders.delete("ETag");
+  respHeaders.delete("Last-Modified");
+  respHeaders.delete("Expires");
+  respHeaders.delete("Age");
+  respHeaders.delete("Vary");
+  respHeaders.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  respHeaders.set("Pragma", "no-cache");
   for (const [k, v] of Object.entries(corsHeaders())) respHeaders.set(k, v);
 
   return new Response(upstream.body, {
