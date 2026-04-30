@@ -1,8 +1,9 @@
-// Moark Web (Cloudflare Pages/Workers)
-// - Calls ai.gitee.com via same-origin proxy: /api/* (Pages Functions) to avoid CORS.
-// - Downloads images/videos via /dl?url=... (Pages Function) to avoid cross-origin blocks.
+// Moark Web / ImgZEdit Android
+// - Browser deployment calls same-origin /api/* and /dl through Cloudflare Pages Functions.
+// - Android WebView has no local Functions runtime, so it falls back to the hosted proxy.
 
 const BASE_V1 = "https://ai.gitee.com/v1"; // for reference only (proxied)
+const HOSTED_PROXY_ORIGIN = "https://image.airymoon.com";
 const $ = (id) => document.getElementById(id);
 
 const Z_RESOLUTIONS = {
@@ -163,9 +164,28 @@ function clearOutput() {
   $("output").innerHTML = "";
 }
 
-// Same-origin proxy to ai.gitee.com/v1
+function shouldUseHostedProxy() {
+  return (
+    location.protocol === "capacitor:" ||
+    location.protocol === "file:" ||
+    location.hostname === "localhost" ||
+    location.hostname === "127.0.0.1"
+  );
+}
+
+function proxyOrigin() {
+  if (window.IMGZEDIT_PROXY_ORIGIN) return window.IMGZEDIT_PROXY_ORIGIN.replace(/\/+$/, "");
+  return shouldUseHostedProxy() ? HOSTED_PROXY_ORIGIN : "";
+}
+
+function proxyPath(path) {
+  const origin = proxyOrigin();
+  return `${origin}${path}`;
+}
+
+// Proxy to ai.gitee.com/v1
 async function apiFetch(path, {method="GET", headers={}, body=null, signal=null}={}) {
-  const res = await fetch(`/api/${path.replace(/^\/+/, "")}`, {
+  const res = await fetch(proxyPath(`/api/${path.replace(/^\/+/, "")}`), {
     method,
     headers,
     body,
@@ -176,7 +196,7 @@ async function apiFetch(path, {method="GET", headers={}, body=null, signal=null}
 
 // Download proxy for arbitrary file_url/image urls to avoid CORS
 async function dlFetch(url, {signal=null}={}) {
-  const u = `/dl?url=${encodeURIComponent(url)}`;
+  const u = proxyPath(`/dl?url=${encodeURIComponent(url)}`);
   const res = await fetch(u, {method:"GET", signal});
   return res;
 }

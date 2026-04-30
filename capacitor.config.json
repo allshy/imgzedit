@@ -1,0 +1,12 @@
+{
+  "appId": "com.allshy.imgzedit",
+  "appName": "ImgZEdit",
+  "webDir": "web",
+  "server": {
+    "hostname": "localhost",
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

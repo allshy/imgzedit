@@ -1,0 +1,16 @@
+node_modules/
+web/
+.npm-cache/
+
+# Android / Gradle build outputs
+android/.gradle/
+android/local.properties
+android/**/build/
+android/captures/
+.gradle-cache/
+
+# Local editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

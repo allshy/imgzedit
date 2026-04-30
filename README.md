@@ -71,4 +71,63 @@
 
 ---
 
+## 四、Android App 打包
+
+本 fork 已加入 Capacitor Android 工程，可通过 GitHub Actions 自动打包 APK。
+
+### GitHub Actions 出 APK
+
+1. 把本地修改推送到 GitHub 的 `main` 分支
+2. 打开仓库的 **Actions** 页面
+3. 选择 **Android APK**
+4. 点击 **Run workflow**，或等待 push 自动触发
+5. 构建完成后，在 workflow 详情页下载 `ImgZEdit-debug-apk`
+
+生成的 debug APK 路径为：
+
+```text
+android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+### 本地同步 Android 工程
+
+```bash
+npm install
+npm run cap:sync
+```
+
+### 本地构建 debug APK
+
+```bash
+npm run android:debug
+```
+
+如果 Windows PowerShell 拦截 `npm.ps1`，可以改用：
+
+```powershell
+npm.cmd install
+npm.cmd run android:debug
+```
+
+### App 代理说明
+
+网页版继续使用同站点的 `/api/*` 和 `/dl` Pages Functions。
+
+Android App 内置网页运行在本地 WebView，没有 Cloudflare Functions，所以会自动把接口请求切到：
+
+```text
+https://image.airymoon.com/api/*
+https://image.airymoon.com/dl?url=...
+```
+
+如需改成自己的 Cloudflare Pages 域名，请修改 `app.js` 里的：
+
+```js
+const HOSTED_PROXY_ORIGIN = "https://image.airymoon.com";
+```
+
+正式发布版需要配置 Android 签名；当前 workflow 生成的是方便安装测试的 debug APK。
+
+---
+
 祝你部署顺利。
