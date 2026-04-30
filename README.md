@@ -128,6 +128,16 @@ const HOSTED_PROXY_ORIGIN = "https://image.airymoon.com";
 
 正式发布版需要配置 Android 签名；当前 workflow 生成的是方便安装测试的 debug APK。
 
+### Android 下载位置
+
+App 内点击生成结果下方的 **保存** 按钮后，会写入：
+
+```text
+Documents/ImgZEdit/
+```
+
+按钮下方会实时显示“正在保存 / 已保存 / 保存失败”，并展示文件名。网页版仍使用浏览器默认下载目录。
+
 ---
 
 祝你部署顺利。

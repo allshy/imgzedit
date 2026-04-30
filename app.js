@@ -116,22 +116,38 @@ function addOutputItem({title, kind="info", meta="", element=null, rawJson=null,
     const b = document.createElement("button");
     b.className = "btn";
     b.textContent = "下载 JSON / Download JSON";
-    b.onclick = () => downloadBlob(new Blob([pre.textContent], {type:"application/json"}), `${title}_${nowTs()}.json`);
+    const jsonNote = document.createElement("div");
+    jsonNote.className = "download-note";
+    b.onclick = () => handleDownload({
+      blob: new Blob([pre.textContent], {type:"application/json"}),
+      filename: `${title}_${nowTs()}.json`,
+      noteEl: jsonNote,
+    });
     btns.appendChild(b);
+    btns.appendChild(jsonNote);
     box.appendChild(btns);
   }
 
   if (download) {
-    const btn = document.createElement("a");
+    const btn = document.createElement("button");
     btn.className = "btn";
-    btn.textContent = "下载 / Download";
-    btn.href = download.href;
-    btn.download = download.filename || "";
-    btn.target = "_blank";
-    btn.rel = "noopener";
+    btn.type = "button";
+    btn.textContent = download.filename ? `保存 ${download.filename}` : "保存 / Save";
     const row = document.createElement("div");
     row.className = "row";
     row.appendChild(btn);
+    const note = document.createElement("div");
+    note.className = "download-note";
+    note.textContent = isNativeApp()
+      ? "点击后保存到 Documents/ImgZEdit"
+      : "点击后保存到浏览器默认下载目录";
+    row.appendChild(note);
+    btn.onclick = () => handleDownload({
+      blob: download.blob,
+      href: download.href,
+      filename: download.filename || `imgzedit-${nowTs()}`,
+      noteEl: note,
+    });
 
     if (openUrl) {
       const b2 = document.createElement("a");
@@ -164,9 +180,13 @@ function clearOutput() {
   $("output").innerHTML = "";
 }
 
+function isNativeApp() {
+  return Boolean(window.Capacitor?.isNativePlatform?.()) || location.protocol === "capacitor:";
+}
+
 function shouldUseHostedProxy() {
   return (
-    location.protocol === "capacitor:" ||
+    isNativeApp() ||
     location.protocol === "file:" ||
     location.hostname === "localhost" ||
     location.hostname === "127.0.0.1"
@@ -231,6 +251,75 @@ function downloadBlob(blob, filename) {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+async function hrefToBlob(href) {
+  const r = await fetch(href);
+  if (!r.ok) throw new Error(`无法读取文件 / Cannot read file (${r.status})`);
+  return r.blob();
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = String(reader.result || "");
+      resolve(result.includes(",") ? result.split(",")[1] : result);
+    };
+    reader.onerror = () => reject(reader.error || new Error("Blob 转换失败 / Blob conversion failed"));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function saveBlobToDevice(blob, filename) {
+  const filesystem = window.Capacitor?.Plugins?.Filesystem;
+  if (!filesystem) throw new Error("当前 App 未加载 Filesystem 插件 / Filesystem plugin is unavailable");
+
+  const path = `ImgZEdit/${filename}`;
+  const data = await blobToBase64(blob);
+  await filesystem.writeFile({
+    path,
+    data,
+    directory: "DOCUMENTS",
+    recursive: true,
+  });
+  const info = await filesystem.getUri({
+    path,
+    directory: "DOCUMENTS",
+  });
+  return {
+    path: `Documents/${path}`,
+    uri: info.uri,
+  };
+}
+
+async function handleDownload({ blob, href, filename, noteEl=null }) {
+  const target = blob || await hrefToBlob(href);
+  const setNote = (text, kind="info") => {
+    if (!noteEl) return;
+    noteEl.textContent = text;
+    noteEl.dataset.kind = kind;
+  };
+
+  try {
+    setNote(`正在保存 ${filename}...`);
+    setStatus(`正在保存 ${filename}...`);
+
+    if (isNativeApp()) {
+      const saved = await saveBlobToDevice(target, filename);
+      setNote(`已保存：${saved.path}`, "ok");
+      setStatus(`已保存到 Documents/ImgZEdit / Saved`, "ok");
+      if (saved.uri) console.info(`Saved ${filename}: ${saved.uri}`);
+      return;
+    }
+
+    downloadBlob(target, filename);
+    setNote(`已触发下载：${filename}（浏览器默认下载目录）`, "ok");
+    setStatus("已触发下载 / Download started", "ok");
+  } catch (e) {
+    setNote(`保存失败：${e.message || e}`, "err");
+    setStatus("保存失败 / Save failed", "err");
+  }
 }
 
 async function fetchAsBlob(url, kindHint="file") {
@@ -388,7 +477,7 @@ async function runHunyuanVideo() {
       meta: `task_id=${taskId} • file_url=${fileUrl}`,
       element: video,
       rawJson: raw,
-      download: { href: blobInfo.objUrl, filename: `hunyuan-video-${nowTs()}.mp4` },
+      download: { href: blobInfo.objUrl, blob: blobInfo.blob, filename: `hunyuan-video-${nowTs()}.mp4` },
       openUrl: openAfter ? fileUrl : null,
     });
 
@@ -474,7 +563,7 @@ async function runZImage() {
       title: `z-image 输出 #${i+1}`,
       meta: `size=${size}, n=${n}`,
       element: img,
-      download: { href: blobInfo.objUrl, filename },
+      download: { href: blobInfo.objUrl, blob: blobInfo.blob, filename },
     });
   }
 
@@ -552,7 +641,7 @@ async function runEdit() {
   if (!fileUrl) throw new Error("success 但没有 file_url / no file_url");
 
   setStatus("Edit-2511 下载中... / Downloading...");
-  const { objUrl } = await fetchAsBlob(fileUrl, "image");
+  const { blob, objUrl } = await fetchAsBlob(fileUrl, "image");
 
   const img = document.createElement("img");
   img.src = objUrl;
@@ -561,7 +650,7 @@ async function runEdit() {
     title: "Edit-2511 输出图片",
     meta: `task_id=${taskId}`,
     element: img,
-    download: { href: objUrl, filename: `edit-2511-${nowTs()}.png` },
+    download: { href: objUrl, blob, filename: `edit-2511-${nowTs()}.png` },
     openUrl: $("editOpenUrl").checked ? fileUrl : null,
   });
 
@@ -774,7 +863,7 @@ async function runWan() {
       title: `Wan2.2 输出视频（分段 ${i+1}/${segCount}）`,
       meta: `width=${width}, height=${height}, frames=${numFrames}, steps=${steps}, guidance=${guidance}`,
       element: video,
-      download: { href: dl.objUrl, filename: name },
+      download: { href: dl.objUrl, blob: dl.blob, filename: name },
       openUrl: $("wanOpenUrl").checked ? fileUrl : null,
     });
   }

@@ -256,6 +256,23 @@ body.modal-open{
   border-color: rgba(255,255,255,.22);
 }
 
+.download-note{
+  width:100%;
+  margin-top:6px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+  word-break:break-word;
+}
+
+.download-note[data-kind="ok"]{
+  color:var(--accent2);
+}
+
+.download-note[data-kind="err"]{
+  color:var(--danger);
+}
+
 .btn.primary{
   background: linear-gradient(180deg, rgba(79,124,255,.95), rgba(79,124,255,.7));
   border-color: rgba(79,124,255,.65);
